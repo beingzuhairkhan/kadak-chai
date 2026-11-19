@@ -31,10 +31,14 @@ export class AuthController {
   ) {
     this.assertSameOrigin(req);
     const token = await this.authService.login(dto.username, dto.password);
+    const isProd =
+      process.env.NODE_ENV === 'production' || Boolean(process.env.RENDER);
+
     res.cookie('access_token', token.access_token, {
       httpOnly: true,
-      secure: process.env.NODE_ENV === 'production',
-      sameSite: 'strict',
+      secure: isProd,
+      sameSite: isProd ? 'none' : 'lax',
+      path: '/',
       maxAge: 8 * 60 * 60 * 1000,
     });
     return { success: true, message: 'Logged in successfully.' };

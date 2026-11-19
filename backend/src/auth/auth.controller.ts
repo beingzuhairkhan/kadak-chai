@@ -8,7 +8,7 @@ import {
   Res,
   UseGuards,
 } from '@nestjs/common';
-import type { Request, Response } from 'express';
+import type { CookieOptions, Request, Response } from 'express';
 import { AuthGuard } from '@nestjs/passport';
 import { Throttle } from '@nestjs/throttler';
 import { LoginDto } from './dto/login.dto';
@@ -31,14 +31,8 @@ export class AuthController {
   ) {
     this.assertSameOrigin(req);
     const token = await this.authService.login(dto.username, dto.password);
-    const isProd =
-      process.env.NODE_ENV === 'production' || Boolean(process.env.RENDER);
-
     res.cookie('access_token', token.access_token, {
-      httpOnly: true,
-      secure: isProd,
-      sameSite: isProd ? 'none' : 'lax',
-      path: '/',
+      ...this.accessTokenCookieOptions(),
       maxAge: 8 * 60 * 60 * 1000,
     });
     return { success: true, message: 'Logged in successfully.' };
@@ -47,7 +41,7 @@ export class AuthController {
   @Post('logout')
   logout(@Req() req: Request, @Res({ passthrough: true }) res: Response) {
     this.assertSameOrigin(req);
-    res.clearCookie('access_token');
+    res.clearCookie('access_token', this.accessTokenCookieOptions());
     return { success: true, message: 'Logged out successfully.' };
   }
 
@@ -55,6 +49,17 @@ export class AuthController {
   @Get('me')
   me(@Req() req: Request & { user?: { username: string } }) {
     return { user: req.user };
+  }
+
+  private accessTokenCookieOptions(): CookieOptions {
+    const isProd =
+      process.env.NODE_ENV === 'production' || Boolean(process.env.RENDER);
+    return {
+      httpOnly: true,
+      secure: isProd,
+      sameSite: isProd ? 'none' : 'lax',
+      path: '/',
+    };
   }
 
   private assertSameOrigin(req: Request) {

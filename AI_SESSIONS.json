@@ -1,0 +1,106 @@
+{
+  "candidate": "Zuhair khan",
+  "total_hours": 5,
+  "notes": "The Copilot chat export has not yet been added to ai-logs. The session is documented here, but the transcript is not attached. The candidate-reported 5 hours predates the queue work and subsequent UI/API follow-ups; update total_hours to the final actual effort before submission.",
+  "sessions": [
+    {
+      "id": "S1",
+      "tool": "GitHub Copilot in VS Code",
+      "model": "Not displayed in the VS Code session UI (Copilot Fusion, Standard mode)",
+      "date": "2026-11-18",
+      "goal": "Build and refine the Kadak Chai Co. campaign app, including its frontend, admin experience, AI moderation, and submission documentation.",
+      "log": null,
+      "share_link": null,
+      "commits": [],
+      "files": [
+        "frontend/src/app/page.tsx",
+        "frontend/src/lib/i18n.ts",
+        "frontend/src/lib/entry-validation.ts",
+        "frontend/src/app/admin/page.tsx",
+        "frontend/src/app/admin/submissions/page.tsx",
+        "frontend/src/app/admin/submissions/[id]/page.tsx",
+        "frontend/src/app/admin/components/admin-login.tsx",
+        "frontend/src/app/admin/components/admin-header.tsx",
+        "frontend/src/app/admin/components/admin-sidebar.tsx",
+        "frontend/src/app/admin/components/stories-panel.tsx",
+        "frontend/src/app/entry/[publicId]/page.tsx",
+        "frontend/src/app/entry/[publicId]/opengraph-image.tsx",
+        "backend/src/ai/ai.service.ts",
+        "backend/src/ai/ai-response.schema.ts",
+        "backend/src/ai/parse.ts",
+        "backend/src/ai/provider.ts",
+        "backend/src/ai/runner.ts",
+        "backend/src/ai/providers/groq.provider.ts",
+        "backend/src/ai/providers/sarvam.provider.ts",
+        "backend/src/ai/providers/mock.provider.ts",
+        "backend/src/entries/entry-validation.ts",
+        "backend/src/entries/entry-validation.spec.ts",
+        "backend/src/entries/entries.service.ts",
+        "backend/src/entries/entries.service.spec.ts",
+        "backend/src/entries/entry.schema.ts",
+        "backend/src/entries/dto/create-entry.dto.ts",
+        "backend/src/admin/admin.service.ts",
+        "backend/src/admin/admin.controller.ts",
+        "backend/src/auth/admin.guard.ts",
+        "backend/src/config/env.validation.ts",
+        "backend/src/common/logging.interceptor.ts",
+        "backend/src/main.ts",
+        "backend/src/app.controller.ts",
+        "backend/src/auth/auth.controller.ts",
+        "backend/src/health/health.controller.ts",
+        "backend/src/entries/entries.controller.ts",
+        "backend/src/moderation/moderation.module.ts",
+        "backend/src/moderation/moderation.service.ts",
+        "backend/src/moderation/moderation.service.spec.ts",
+        "backend/src/moderation/moderation.utils.ts",
+        "backend/src/entries/entries.module.ts",
+        "backend/test/app.e2e-spec.ts",
+        "backend/src/ai/parse.spec.ts",
+        "backend/src/ai/runner.spec.ts",
+        "docker-compose.yml",
+        "backend/Dockerfile",
+        "frontend/Dockerfile",
+        "backend/package.json",
+        "backend/package-lock.json",
+        "README.md",
+        ".env.example",
+        "AI_USAGE.md",
+        "ai-logs/README.txt"
+      ],
+      "kept": "The componentized frontend/admin structure, shared client/server validation, AI provider and parser structure, and most of the implemented campaign flow.",
+      "changed": "Reworked contact handling so email and phone can both be retained; expanded the English/Hindi UI; corrected provider endpoint and structured-output handling; fixed build issues found during validation; switched API routes to NestJS URI versioning while preserving /api/v1 URLs; moved moderation to a MongoDB-first BullMQ/Redis background flow with pending-review fallback. Follow-up submission work returns only publicId, status, and resultPath from POST; the public lookup returns only publicId/status for rejected entries, while approved results retain their public caption. The approval confirmation uses icon-only copy/open actions, rejection shows only a plain rejection message, and raw stories over 300 Unicode code points are rejected client/server-side (HTTP 400 on the server) rather than truncated. An isolated Redis-unavailable check confirmed the API stored a synthetic entry as pending; live Redis processing and OOM were not tested.",
+      "rejected": "No specific implementation was recorded as rejected in the available project conversation.",
+      "mistakes_caught": [
+        {
+          "what": "The contact form made email and phone mutually exclusive.",
+          "how": "The user reported that entering one erased the other; the form and validation were changed and rechecked."
+        },
+        {
+          "what": "A frontend render-time Date.now() call was incompatible with production prerendering.",
+          "how": "The production build exposed the prerender issue; initialization was moved to client-side state."
+        },
+        {
+          "what": "An Open Graph route runtime conflicted with cacheComponents, and a dynamic route needed a Suspense boundary.",
+          "how": "The Next.js build surfaced the incompatibilities; the route configuration and boundary were corrected."
+        },
+        {
+          "what": "The AI provider setup repeatedly returned bad_output; this indicated response/configuration trouble, not by itself an invalid API key.",
+          "how": "Provider and parser diagnostics plus endpoint inspection led to correcting the Sarvam base URL and structured-output handling. Live key validity was not tested."
+        },
+        {
+          "what": "The Docker backend health check probed the authenticated /api/v1/auth/me endpoint and treated HTTP 401 as healthy instead of using the public health endpoint.",
+          "how": "Review found the existing /api/v1/health route; the Compose check was changed to require a successful response from it."
+        },
+        {
+          "what": "The initial submission response and rejected-entry lookup exposed story details, and the rejection UI displayed share controls.",
+          "how": "The POST response was reduced to publicId/status/resultPath, rejected lookups now return only publicId/status, and the frontend renders only the rejection message."
+        },
+        {
+          "what": "The story textarea silently clipped input at 300 characters, while validation measured text after whitespace normalization.",
+          "how": "Input truncation was removed and both client and server validate the raw Unicode code-point length before normalization; the backend returns HTTP 400 for overlength submissions."
+        }
+      ]
+    }
+  ],
+  "written_by_hand": []
+}

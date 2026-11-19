@@ -1,0 +1,8 @@
+.env
+.git
+**/node_modules
+**/.next
+**/dist
+**/coverage
+**/npm-debug.log
+ai-logs
